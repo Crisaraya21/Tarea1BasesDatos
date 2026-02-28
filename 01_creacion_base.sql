@@ -1,0 +1,2 @@
+BASE DE DATOS Tarea1DB; 
+IR
