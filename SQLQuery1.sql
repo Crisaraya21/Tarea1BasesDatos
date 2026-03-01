@@ -2,9 +2,16 @@ USE Tarea1DB;
 GO
 
 -- Borrar tablas si existen (orden inverso por dependencias)
+DROP TABLE IF EXISTS tbl_ediciones;
 DROP TABLE IF EXISTS tbl_usuario_rol;
+DROP TABLE IF EXISTS tbl_curso_instructor;
 DROP TABLE IF EXISTS tbl_roles;
 DROP TABLE IF EXISTS tbl_usuarios;
+DROP TABLE IF EXISTS tbl_cursos;
+
+
+
+
 GO
 
 -- TABLA USUARIOS
@@ -25,8 +32,58 @@ GO
 
 -- TABLA ROLES
 CREATE TABLE tbl_roles (
-    id_rol  INT         IDENTITY(1,1) PRIMARY KEY,
+    id_rol  INT     IDENTITY(1,1) PRIMARY KEY,
     nombre  VARCHAR(20) NOT NULL UNIQUE 
             CHECK (nombre IN('estudiante','instructor'))
 );
 GO
+--TABLA DE USUARIO ROL(RELACION ESTUDIANTE CON INSTRUCTOR)
+
+CREATE TABLE tbl_usuario_rol(
+id_usuario INT NOT NULL,
+id_rol INT NOT NULL,
+PRIMARY KEY (id_usuario,id_rol),
+FOREIGN KEY(id_usuario) REFERENCES tbl_usuarios(id_usuario),
+FOREIGN KEY(id_rol) REFERENCES tbl_roles(id_rol)
+);
+GO
+
+--Tabla de cursos
+CREATE TABLE tbl_cursos (
+    id_curso     INT           IDENTITY(1,1) PRIMARY KEY,
+    codigo       VARCHAR(20)   NOT NULL UNIQUE,
+    nombre       VARCHAR(100)  NOT NULL,
+    descripcion  TEXT,
+    duracion_sem INT           NOT NULL,
+    precio       DECIMAL(10,2) NOT NULL,
+    nivel        VARCHAR(15)   NOT NULL
+                 CHECK (nivel IN ('basico','intermedio','avanzado')),
+    estado       VARCHAR(10)   NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo','cerrado'))
+);
+GO   
+
+-- TABLA CURSO_INSTRUCTOR 
+CREATE TABLE tbl_curso_instructor (
+    id_curso    INT  NOT NULL,
+    id_usuario  INT  NOT NULL,
+    PRIMARY KEY (id_curso, id_usuario),
+    FOREIGN KEY (id_curso)   REFERENCES tbl_cursos(id_curso),
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuarios(id_usuario)
+);
+GO
+
+
+CREATE TABLE tbl_ediciones(
+    id_edicion   INT         IDENTITY(1,1) PRIMARY KEY,
+    id_curso INT  NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin    DATE NOT NULL,
+    cupo_maximo  INT NOT NULL, 
+    modalidad  VARCHAR(10) NOT NULL CHECK(modalidad IN('virtual','hibrido')),
+    CHECK(fecha_inicio<fecha_fin),
+    FOREIGN KEY(id_curso) REFERENCES tbl_cursos(id_curso)
+    );
+    GO
+
+
+
