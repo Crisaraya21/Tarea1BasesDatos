@@ -87,3 +87,32 @@ CREATE TABLE tbl_ediciones(
 
 
 
+
+
+    ----INFORMES-------
+    SELECT 
+    tbl_cursos.codigo,
+    tbl_cursos.nombre AS Curso,
+    tbl_usuarios.primer_nombre + ' ' + tbl_usuarios.primer_apellido AS instructor
+    FROM tbl_cursos
+    JOIN tbl_curso_instructor ON tbl_cursos.id_curso = tbl_curso_instructor.id_curso
+    JOIN tbl_usuarios ON tbl_curso_instructor.id_usuario = tbl_usuarios.id_usuario
+    ;
+GO
+
+SELECT 
+
+tbl_ediciones.cupo_maximo * tbl_cursos.precio AS ingreso_proyectado
+FROM tbl_cursos
+JOIN tbl_ediciones ON tbl_cursos.id_curso = tbl_ediciones.id_curso
+
+;
+GO
+
+
+
+
+    
+
+
+
