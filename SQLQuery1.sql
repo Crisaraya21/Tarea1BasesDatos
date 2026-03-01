@@ -213,13 +213,15 @@ BEGIN
     SET NOCOUNT ON;
 
     -- Recalcular progreso: % de pesos evaluados respecto al total de la edición
+    -- Se usa tbl_inscripciones.id_edicion (contexto externo) para evitar
+    -- referenciar columna no agregada dentro del SELECT con SUM.
     UPDATE tbl_inscripciones
     SET progreso = (
         SELECT ISNULL(
             100.0 * SUM(e.peso) /
             NULLIF((SELECT SUM(e2.peso)
                     FROM tbl_evaluaciones e2
-                    WHERE e2.id_edicion = e.id_edicion), 0)
+                    WHERE e2.id_edicion = tbl_inscripciones.id_edicion), 0)
         , 0)
         FROM tbl_calificaciones c
         JOIN tbl_evaluaciones e ON c.id_evaluacion = e.id_evaluacion
